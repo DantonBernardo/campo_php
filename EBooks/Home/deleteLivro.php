@@ -1,5 +1,6 @@
 <?php
-include('../connect.php'); // Conectar ao banco
+//Conectando ao BD
+include('../connect.php');
 
 if (isset($_GET['id'])) {
     $id = $_GET['id'];

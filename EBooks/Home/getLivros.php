@@ -1,5 +1,5 @@
 <?php
-// Função para buscar os livros do banco de dados
+
 function getLivros($pdo) {
     try {
         // Prepara e executa a query para buscar os livros
@@ -13,4 +13,5 @@ function getLivros($pdo) {
         die("Erro ao buscar os livros: " . $e->getMessage());
     }
 }
+
 ?>
