@@ -1,9 +1,9 @@
 <?php
 
-if (!isset($_SESSION)) {
-  session_start();
-}
+//Verificação de usuário logado
+include('../Home/protect.php');
 
+//Conectando BD
 include('../connect.php');
 
 // Inclui o arquivo com a função getLivros
