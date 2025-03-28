@@ -31,10 +31,9 @@ class Database {
     }
 }
 
-// Exemplo de uso
 $database = new Database(); // Cria a instância da classe Database
 $pdo = $database->getConnection(); // Obtém a conexão com o banco de dados
 
-// Quando terminar, você pode fechar a conexão chamando o método:
+// Ao finalizar, fecha a conexão chamando o seguinte método
 $database->closeConnection();
 ?>

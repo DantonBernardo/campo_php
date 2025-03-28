@@ -8,20 +8,32 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $descricao = $_POST['descricao'];
     $url = $_POST['url'];
 
-    // Atualizar no banco de dados
-    $sql = "UPDATE livros SET nome = :nome, descricao = :descricao, url = :url WHERE id = :id";
-    $stmt = $pdo->prepare($sql);
-    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-    $stmt->bindParam(':nome', $nome, PDO::PARAM_STR);
-    $stmt->bindParam(':descricao', $descricao, PDO::PARAM_STR);
-    $stmt->bindParam(':url', $url, PDO::PARAM_STR);
+    if(!filter_var($url, FILTER_VALIDATE_URL)){
+        echo "<span>URL inválida!</span>";
+        return false;
+    }
 
-    if ($stmt->execute()) {
-        echo "Livro atualizado com sucesso!";
-        header("Location: index.php"); // Redireciona de volta à lista
-        exit();
+    if(!empty(trim($nome)) && !empty(trim($descricao)) && !empty(trim($url))){
+        // Atualizar no banco de dados
+        $sql = "UPDATE livros SET nome = :nome, descricao = :descricao, url = :url WHERE id = :id";
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->bindParam(':nome', $nome, PDO::PARAM_STR);
+        $stmt->bindParam(':descricao', $descricao, PDO::PARAM_STR);
+        $stmt->bindParam(':url', $url, PDO::PARAM_STR);
+    
+        if ($stmt->execute()) {
+            echo "Livro atualizado com sucesso!";
+            header("Location: index.php"); // Redireciona de volta à lista
+            exit();
+        } else {
+            echo "Erro ao atualizar o livro.";
+        }
     } else {
         echo "Erro ao atualizar o livro.";
+        return false;
     }
+
+
 }
 ?>

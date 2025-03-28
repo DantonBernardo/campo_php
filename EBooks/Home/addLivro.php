@@ -2,20 +2,29 @@
 
 include('../connect.php');
 
-function adicionarLivro($nome, $descricao, $url): void
+function adicionarLivro($nome, $descricao, $url)
 {
   global $pdo;
-  $stmt = $pdo->prepare("INSERT INTO livros (nome, descricao, url) VALUES (:nome, :descricao, :url)");
-  $stmt->bindParam(':nome', $nome);
-  $stmt->bindParam(':descricao', $descricao);
-  $stmt->bindParam(':url', $url);
-
-  if ($stmt->execute()) {
-    echo "<span>Livro adicionado com sucesso!</span>";
-  } else {
-    echo "<span>Erro ao adicionar este Livro.</span>";
+  if(!empty(trim($nome)) && !empty(trim($descricao)) && !empty(trim($url))){
+    if(!filter_var($url, FILTER_VALIDATE_URL)){
+      echo "<span>URL inválida!</span>";
+      return false;
+    }
+    $stmt = $pdo->prepare("INSERT INTO livros (nome, descricao, url) VALUES (:nome, :descricao, :url)");
+    $stmt->bindParam(':nome', $nome);
+    $stmt->bindParam(':descricao', $descricao);
+    $stmt->bindParam(':url', $url);
+  
+    if ($stmt->execute()) {
+      echo "<span>Livro adicionado com sucesso!</span>";
+    } else {
+      echo "<span>Erro ao adicionar este Livro.</span>";
+    }
+  }else{
+     echo "<span>Erro ao adicionar este Livro.</span>";
   }
 }
+
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
   $nome = $_POST['nome'];
@@ -127,6 +136,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       box-sizing: border-box;
       padding: 10px;
     }
+    .white{
+      color: #fff;
+    }
   </style>
 </head>
 
@@ -135,6 +147,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <h2>GIGI Books</h2>
     <a href="http://localhost/camporeal/EBooks/Home/addLivro.php">
       <button class="green">Adicionar novo livro</button>
+    </a>
+    <a href="http://localhost/camporeal/EBooks/Home/index.php" class="white">
+      Retornar a tela principal
     </a>
     <a href="../logout.php">
       <button>Sair</button>

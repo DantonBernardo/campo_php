@@ -1,4 +1,5 @@
 <?php
+session_start(); // Inicia a sessão
 
 //Verificação de usuário logado
 include('../Home/protect.php');
@@ -143,7 +144,7 @@ $livros = getLivros($pdo);
       <button>Sair</button>
     </a>
   </header>
-  <main>
+  <main>''
     <ul>
       <!-- Listagem de todos os livros -->
       <?php foreach ($livros as $livro): ?>
