@@ -1,52 +1,54 @@
 <?php
-
-//Conexão ao BD
+// Conexão ao BD
 include('./connect.php');
 
-//Iniciando a sessão
+// Iniciando a sessão
 session_start();
 
-//Aviso de erro ao logar
+// Aviso de erro ao logar
 $loginError = false;
 
-//Verificação de login
-if (isset($_POST['username']) && isset($_POST['password'])) { //Se os campos não estiverem vazios (isset) [...]
-
-    //Login vazio
+// Verificação de login
+if (isset($_POST['username']) && isset($_POST['password'])) {
+    // Verifica campos vazios
     if (empty($_POST['username'])) {
         echo "<span>Insira seu usuário!</span>";
     } else if (empty($_POST['password'])) {
         echo "<span>Insira sua senha!</span>";
     } else {
-        // Pegando os dados do formulário
-        $username = trim($_POST['username']); // Trim para tirar espaços antes e depois digitados
+        // Pega os dados do formulário
+        $username = trim($_POST['username']);
         $password = trim($_POST['password']);
 
-        // Consulta no BD usando Prepared Statements (Evita SQL Injection)
-        $sql = "SELECT * FROM usuarios WHERE nome = :username AND senha = :password";
+        // Consulta o hash armazenado no BD
+        $sql = "SELECT * FROM usuarios WHERE nome = :username";
         $stmt = $pdo->prepare($sql);
-        //bindParam para melhor segurança
         $stmt->bindParam(':username', $username);
-        $stmt->bindParam(':password', $password);
         $stmt->execute();
 
-        // Verificando se encontrou um usuário
+        // Verifica se o usuário existe
         if ($stmt->rowCount() == 1) {
             $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+            $hashArmazenado = $usuario['senha']; // Pega o hash do banco
 
-            // Armazenamento dos dados na sessão
-            $_SESSION['id'] = $usuario['id'];
-            $_SESSION['nome'] = $usuario['nome'];
+            // Gera o hash da senha digitada (SHA-256)
+            $hashDigitado = hash('sha256', $password);
 
-            // Redirecionamento
-            header("Location: /camporeal/EBooks/Home/index.php");
-            exit();
+            // Compara os hashes
+            if ($hashDigitado === $hashArmazenado) {
+                // Login bem-sucedido
+                $_SESSION['id'] = $usuario['id'];
+                $_SESSION['nome'] = $usuario['nome'];
+                header("Location: /camporeal/EBooks/Home/index.php");
+                exit();
+            } else {
+                $loginError = true; // Senha incorreta
+            }
         } else {
-            $loginError = true;
+            $loginError = true; // Usuário não existe
         }
     }
 }
-
 ?>
 
 <!DOCTYPE html>
